@@ -1,6 +1,7 @@
 import pygame
-from network import *
-from player import *
+from network import Network
+from player import Player
+
 
 # window
 width = 500
@@ -16,40 +17,22 @@ def newWindow(win, player1, player2):
     pygame.display.update()
 
 
-clientNumber = 0
-
-
-def readPos(str):
-    str = str.split(",")
-    return int(str[0]), int(str[1])
-
-
-def makePos(tup):
-    return str(tup[0]) + "," + str(tup[1])
-
-
 def main():
     run = True
-
     n = Network()
-    startPos = readPos(n.getPos())   # str from server need to adapter
-    p1 = Player(startPos[0], startPos[1], 100, 100, (0, 255, 0))
-    p2 = Player(0, 0, 100, 100, (255, 0, 0))
+    p = n.getP()
     clock = pygame.time.Clock()
 
     while run:
         clock.tick(60)  # check run
-        p2Pos = readPos(n.send(makePos((p1.x, p1.y))))
-        p2.x = p2Pos[0]
-        p2.y = p2Pos[1]
-        p2.update()
+        p2 = n.send(p)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
                 pygame.quit()
-        p1.move()
-        newWindow(win, p1, p2)
+        p.move()
+        newWindow(win, p, p2)
 
 
 main()

@@ -1,5 +1,7 @@
+import pickle
 import socket
 from _thread import *
+from player import *
 import sys
 
 server = "192.168.253.114"
@@ -15,39 +17,31 @@ except socket.error as e:
 s.listen(2)
 print("Waiting for a connection, Server Started")
 
+players = [Player(0, 0, 50, 50, (255, 0, 0)),
+           Player(100, 100, 50, 50, (0, 0, 255))]
 
-
-
-def readPos(str):
-    str = str.split(",")
-    return int(str[0]), int(str[1])
-
-
-def makePos(tup):
-    return str(tup[0]) + "," + str(tup[1])
-
-pos = [(0, 0), (100, 100)]
 
 def threaded_client(conn, player):
-    conn.send(str.encode(makePos(pos[player])))
+    conn.send(pickle.dumps(players[player]))
     reply = ""
     while True:
         try:
-            data = readPos(conn.recv(2048).decode())  # amount recv information
-            pos[player] = data
+            data = pickle.loads(conn.recv(2048))  # amount recv information
+            players[player] = data
+
             if not data:
                 print("Disconnected")
                 break
             else:
                 if player == 1:
-                    reply = pos[0]
+                    reply = players[0]
                 else:
-                    reply = pos[1]
+                    reply = players[1]
 
                 print("Received: ", data)
                 print("Sending: ", reply)
 
-            conn.sendall(str.encode(makePos(reply)))
+            conn.sendall(pickle.dumps(reply))
         except:
             break
 

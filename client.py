@@ -45,8 +45,8 @@ class Button:
     def draw(self, win):
         pygame.draw.rect(
             win, self.color, (self.x, self.y, self.width, self.height))
-        font = pygame.font.SysFont("comicsans", 40)
-        text = font.render(self.text, 1, (255, 255, 255))
+        font = pygame.font.SysFont("comicsans", 30)
+        text = font.render(self.text, 1, (0, 0, 0))
         win.blit(text, (self.x + round(self.width/2) - round(text.get_width()/2),
                  self.y + round(self.height/2) - round(text.get_height()/2)))
 
@@ -59,33 +59,36 @@ class Button:
             return False
 
 
-width = 1920
-height = 600
+width = 1200
+height = 375
 win = pygame.display.set_mode((width, height))
 picture = pygame.image.load('bg.jpg')
 picture = pygame.transform.scale(picture, (width, height))
-pygame.display.set_caption("Client")
+pygame.display.set_caption("ROCK PAPER SCISSORS - Client")
 
 
 def redrawWindow(win, game, p):
     win.fill((255, 255, 255))
     win.blit(picture, (0, 0))
     if not(game.connected()):
-        font = pygame.font.SysFont("consolas", 80)
-        text = font.render("Waiting for Player...", 1, (255, 0, 0), True)
+        font = pygame.font.SysFont("consolas", 60)
+        # text = font.render("Waiting for Player...", 1, (255, 0, 0), True)
+        text = font.render("Waiting for Player...", True, (255, 255, 255))
+        text.set_alpha(200)
         win.blit(text, (width/2 - text.get_width() /
                  2, height/2 - text.get_height()/2))
     else:
-        font = pygame.font.SysFont("consolas", 70, bold=True)
+        font = pygame.font.SysFont("consolas", 50, bold=True)
         text = font.render("Multiplayer Game", 1, (255, 255, 255))
-        win.blit(text, (630, 70))
+        win.blit(text, (width/2 - text.get_width() /
+                 2, 50))
 
-        font = pygame.font.SysFont("candara", 60)
+        font = pygame.font.SysFont("candara", 48)
         text = font.render("Your Move", 1, (255, 255, 255))
-        win.blit(text, (600, 200))
+        win.blit(text, (width/2 - width/4 - text.get_width()/2, 120))
 
         text = font.render("Opponents", 1, (255, 255, 255))
-        win.blit(text, (1000, 200))
+        win.blit(text, (width/2 + width/4 - text.get_width()/2, 120))
 
         move1 = game.get_player_move(0)
         move2 = game.get_player_move(1)
@@ -110,11 +113,11 @@ def redrawWindow(win, game, p):
                 text2 = font.render("Waiting...", 1, (255, 255, 255))
 
         if p == 1:
-            win.blit(text2, (660, 300))
-            win.blit(text1, (1060, 300))
+            win.blit(text2, (width/2 - width/4 - text1.get_width()/2, 180))
+            win.blit(text1, (width/2 + width/4 - text2.get_width()/2, 180))
         else:
-            win.blit(text1, (660, 300))
-            win.blit(text2, (1060, 300))
+            win.blit(text1, (width/2 - width/4 - text1.get_width()/2, 180))
+            win.blit(text2, (width/2 + width/4 - text2.get_width()/2, 180))
 
         for btn in btns:
             btn.draw(win)
@@ -122,8 +125,8 @@ def redrawWindow(win, game, p):
     pygame.display.update()
 
 
-btns = [Button("Rock", 670, 400, (0, 0, 0)), Button(
-    "Scissor", 870, 400, (0, 0, 0)), Button("Paper", 1070, 400, (0, 0, 0))]
+btns = [Button("Rock", width/2 - width/4 - 75, 250, (255, 255, 255)), Button(
+    "Scissors", width/2 - 75, 250, (255, 255, 255)), Button("Paper", width/2 + width/4 - 75, 250, (255, 255, 255))]
 
 
 def main():
@@ -156,7 +159,8 @@ def main():
 
             font = pygame.font.SysFont("comicsans", 90)
             if (check == 1 and player == 1) or (check == 0 and player == 0):
-                text = font.render("You Won!", 1, (255, 0, 0))
+                text = font.render("You Won!", 1, (63, 171, 187))
+                # text.set_alpha(200)
                 if (player == 0):
                     picmain = pygame.image.load(imgP1)
                     picmain = pygame.transform.scale(picmain, (width, height))
@@ -167,7 +171,8 @@ def main():
                     win.blit(picmain, (0, 0))
 
             elif check == -1:
-                text = font.render("Tie Game!", 1, (255, 0, 0))
+                text = font.render("Tie Game!", 1, (145, 165, 224))
+                # text.set_alpha(200)
                 if (player == 0):
                     picmain = pygame.image.load(imgP1)
                     picmain = pygame.transform.scale(picmain, (width, height))
@@ -177,7 +182,8 @@ def main():
                     picmain = pygame.transform.scale(picmain, (width, height))
                     win.blit(picmain, (0, 0))
             else:
-                text = font.render("You Lost!", 1, (255, 0, 0))
+                text = font.render("You Lost!", 1, (217, 76, 73))
+                # text.set_alpha(200)
                 if (player == 0):
                     picmain = pygame.image.load(imgP1)
                     picmain = pygame.transform.scale(picmain, (width, height))

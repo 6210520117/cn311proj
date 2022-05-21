@@ -3,22 +3,34 @@ import socket
 from _thread import *
 from game import Game
 
-server = "192.168.1.5"
-port = 8000
+server = "192.168.1.7"  # IP ของ server
+port = 8000             # port ที่จะใช้ในการติดต่อ
+
+# สร้าง socket object
+# AF_INET: IPV4, SOCK_STREAM: TCP
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+# กำหนดข้อมูลพื้นฐานให้กับ socket object
 s.bind((server, port))
+
+# สั่งให้รอการเชื่อมต่อจาก client
 s.listen()
 print("Waiting...")
+
+
 games = {}  # store game
 idCount = 0
 
 
 def threaded_client(conn, p, gameId):
     global idCount
+
+    # ส่งว่าเป็น player ใด ไปที่ client
     conn.send(str.encode(str(p)))
 
     while True:
         try:
+            # รับข้อมูลจาก client
             data = conn.recv(4096).decode()
 
             if gameId in games:
@@ -48,8 +60,11 @@ def threaded_client(conn, p, gameId):
 
 
 while True:
+    # รับการเชื่อมต่อจาก client
     conn, addr = s.accept()
     print("Connected to:", addr)
+
+    # alg for gameID
     idCount += 1
     p = 0
     gameId = (idCount - 1) // 2  # มอบสิ่งระบุตัวตน 0 vs 0 1 vs 1
@@ -60,4 +75,5 @@ while True:
         games[gameId].ready = True
         p = 1
 
+    # สร้าง thread แต่ละ client
     start_new_thread(threaded_client, (conn, p, gameId))

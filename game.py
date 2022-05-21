@@ -9,10 +9,6 @@ class Game:
         self.ties = 0
 
     def get_player_move(self, p):
-        """
-        :param p: [0,1]
-        :return: Move
-        """
         return self.moves[p]
 
     def play(self, player, move):
@@ -23,7 +19,7 @@ class Game:
             self.p2Went = True
 
     def connected(self):
-        return self.ready # ตรวจสอบ connection จาก server
+        return self.ready  # ตรวจสอบ connection จาก server
 
     def bothWent(self):
         return self.p1Went and self.p2Went
@@ -31,13 +27,13 @@ class Game:
     def winner(self):
 
         p1 = self.moves[0].upper()[0]
-        p2 = self.moves[1].upper()[0] # เอาจัวอักษรแรก
+        p2 = self.moves[1].upper()[0]  # เอาจัวอักษรแรก
 
         winner = -1  # ties
         if p1 == "R" and p2 == "S":
             winner = 0  # player 1 win
         elif p1 == "S" and p2 == "R":
-            winner = 1 # player 2 win
+            winner = 1  # player 2 win
         elif p1 == "P" and p2 == "R":
             winner = 0
         elif p1 == "R" and p2 == "P":

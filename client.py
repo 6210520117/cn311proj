@@ -65,6 +65,8 @@ win = pygame.display.set_mode((width, height))
 picture = pygame.image.load('bg.jpg')
 picture = pygame.transform.scale(picture, (width, height))
 pygame.display.set_caption("ROCK PAPER SCISSORS - Client")
+Icon = pygame.image.load('logo.png')
+pygame.display.set_icon(Icon)
 
 
 def redrawWindow(win, game, p):

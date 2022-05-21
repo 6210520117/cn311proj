@@ -1,4 +1,3 @@
-from moving import *
 import pygame
 import socket
 import pickle
@@ -124,7 +123,7 @@ def redrawWindow(win, game, p):
 
 
 btns = [Button("Rock", 670, 400, (0, 0, 0)), Button(
-    "Scissor", 870, 400, (255, 0, 0)), Button("Paper", 1070, 400, (0, 255, 0))]
+    "Scissor", 870, 400, (0, 0, 0)), Button("Paper", 1070, 400, (0, 0, 0))]
 
 
 def main():
@@ -153,19 +152,53 @@ def main():
                 print("Couldn't get game")
                 break
 
-            check, img = game.winner()
+            check, imgP1, imgP2 = game.winner()
 
             font = pygame.font.SysFont("comicsans", 90)
             if (check == 1 and player == 1) or (check == 0 and player == 0):
                 text = font.render("You Won!", 1, (255, 0, 0))
-                text = font.render(img, 1, (255, 0, 0))
+                if (player == 0):
+                    picmain = pygame.image.load(imgP1)
+                    picmain = pygame.transform.scale(picmain, (width, height))
+                    win.blit(picmain, (0, 0))
+                else:
+                    picmain = pygame.image.load(imgP2)
+                    picmain = pygame.transform.scale(picmain, (width, height))
+                    win.blit(picmain, (0, 0))
+
             elif check == -1:
                 text = font.render("Tie Game!", 1, (255, 0, 0))
+                if (player == 0):
+                    picmain = pygame.image.load(imgP1)
+                    picmain = pygame.transform.scale(picmain, (width, height))
+                    win.blit(picmain, (0, 0))
+                else:
+                    picmain = pygame.image.load(imgP2)
+                    picmain = pygame.transform.scale(picmain, (width, height))
+                    win.blit(picmain, (0, 0))
             else:
                 text = font.render("You Lost!", 1, (255, 0, 0))
+                if (player == 0):
+                    picmain = pygame.image.load(imgP1)
+                    picmain = pygame.transform.scale(picmain, (width, height))
+                    win.blit(picmain, (0, 0))
+                else:
+                    picmain = pygame.image.load(imgP2)
+                    picmain = pygame.transform.scale(picmain, (width, height))
+                    win.blit(picmain, (0, 0))
 
             win.blit(text, (width/2 - text.get_width() /
                      2, height/2 - text.get_height()/2))
+
+            # if (player == 0):
+            #     picmain = pygame.image.load(imgP1)
+            #     picmain = pygame.transform.scale(picmain, (width, height))
+            #     win.blit(picmain, (0, 0))
+            # else:
+            #     picmain = pygame.image.load(imgP2)
+            #     picmain = pygame.transform.scale(picmain, (width, height))
+            #     win.blit(picmain, (0, 0))
+
             pygame.display.update()
             pygame.time.delay(2000)
 
@@ -196,7 +229,6 @@ pic = pygame.transform.scale(pic, (width, height))
 def menu_screen():
     run = True
     clock = pygame.time.Clock()
-
     while run:
         clock.tick(60)
         win.fill((0, 0, 0))

@@ -28,28 +28,47 @@ class Game:
 
         p1 = self.moves[0].upper()[0]
         p2 = self.moves[1].upper()[0]  # เอาตัวอักษรแรก
-        img = ""
-        winner = -1  # ties
+        imgP1 = ''
+        imgP2 = ''
+
         if p1 == "R" and p2 == "S":
             winner = 0  # player 1 win
-            img = "lol1"
+            imgP1 = 'r-s.jpg'
+            imgP2 = 's-r.jpg'
         elif p1 == "S" and p2 == "R":
             winner = 1  # player 2 win
-            img = "lol2"
+            imgP1 = 's-r.jpg'
+            imgP2 = 'r-s.jpg'
         elif p1 == "P" and p2 == "R":
             winner = 0
-            img = "lol3"
+            imgP1 = 'p-r.jpg'
+            imgP2 = 'r-p.jpg'
         elif p1 == "R" and p2 == "P":
             winner = 1
-            img = "lol4"
+            imgP1 = 'r-p.jpg'
+            imgP2 = 'p-r.jpg'
         elif p1 == "S" and p2 == "P":
             winner = 0
-            img = "lol5"
+            imgP1 = 's-p.jpg'
+            imgP2 = 'p-s.jpg'
         elif p1 == "P" and p2 == "S":
             winner = 1
-            img = "lol6"
+            imgP1 = 'p-s.jpg'
+            imgP2 = 's-p.jpg'
+        elif p1 == "S" and p2 == "S":
+            winner = -1
+            imgP1 = 's-s.jpg'
+            imgP2 = 's-s.jpg'
+        elif p1 == "R" and p2 == "R":
+            winner = -1
+            imgP1 = 'r-r.jpg'
+            imgP2 = 'r-r.jpg'
+        elif p1 == "P" and p2 == "P":
+            winner = -1
+            imgP1 = 'p-p.jpg'
+            imgP2 = 'p-p.jpg'
 
-        return winner, img
+        return winner, imgP1, imgP2
 
     def resetWent(self):
         self.p1Went = False

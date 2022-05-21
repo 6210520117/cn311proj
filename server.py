@@ -3,7 +3,7 @@ import socket
 from _thread import *
 from game import Game
 
-server = "192.168.1.7"  # IP ของ server
+server = socket.gethostname()  # IP ของ server
 port = 8000             # port ที่จะใช้ในการติดต่อ
 
 # สร้าง socket object

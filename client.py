@@ -6,29 +6,28 @@ pygame.font.init()
 
 # NETWORK
 
-
 class Network:
     def __init__(self):
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server = socket.gethostname()
         self.port = 8000
         self.addr = (self.server, self.port)
-        self.p = self.connect()
+        self.p = self.connect() 
 
     def getP(self):
         return self.p
-
-    def connect(self):
+     
+    def connect(self): # ดูจาก server ว่าในการเชื่อมต่อเราเป็น client ของ player 0 หรือ 1
         try:
             self.client.connect(self.addr)
-            return self.client.recv(2048).decode()
+            return self.client.recv(2048).decode() # รับจาก 29 server
         except socket.error as e:
             print(e)
 
     def send(self, data):
         try:
-            self.client.send(str.encode(data))
-            return pickle.loads(self.client.recv(2048*2))
+            self.client.send(str.encode(data)) # send พวก "reset" กรณีเลือกbtnและรู้ผลของเกมแล้ว, send ว่าเลือก btn อะไร
+            return pickle.loads(self.client.recv(2048*2)) # โหลด Game object ที่มีการ update (ข้อมูลจาก 47 server)
         except socket.error as e:
             print(e)
 
@@ -72,9 +71,8 @@ pygame.display.set_icon(Icon)
 def redrawWindow(win, game, p):
     win.fill((255, 255, 255))
     win.blit(picture, (0, 0))
-    if not(game.connected()):
+    if not(game.connected()): # ตรวจสอบว่ามีการเชื่อมต่อครบ 2 คนหรือยัง
         font = pygame.font.SysFont("consolas", 60)
-        # text = font.render("Waiting for Player...", 1, (255, 0, 0), True)
         text = font.render("Waiting for Player...", True, (255, 255, 255))
         text.set_alpha(200)
         win.blit(text, (width/2 - text.get_width() /
@@ -92,15 +90,16 @@ def redrawWindow(win, game, p):
         text = font.render("Opponents", 1, (255, 255, 255))
         win.blit(text, (width/2 + width/4 - text.get_width()/2, 120))
 
+        # player แต่ละคนเลือกอะไร
         move1 = game.get_player_move(0)
         move2 = game.get_player_move(1)
 
         font = pygame.font.SysFont("candara", 40)
-        if game.bothWent():
-            text1 = font.render(move1, 1, (255, 255, 255))
+        if game.bothWent(): # ทั้งคู่ตอบแล้ว
+            text1 = font.render(move1, 1, (255, 255, 255)) # แสดงผลว่า user เลือกอะไร
             text2 = font.render(move2, 1, (255, 255, 255))
         else:
-            if game.p1Went and p == 0:
+            if game.p1Went and p == 0: # ถ้า player 0 เลือกแล้วและเราเป็น player 0
                 text1 = font.render(move1, 1, (255, 255, 255))
             elif game.p1Went:
                 text1 = font.render("Selected", 1, (255, 255, 255))
@@ -157,12 +156,11 @@ def main():
                 print("Couldn't get game")
                 break
 
-            check, imgP1, imgP2 = game.winner()
+            check, imgP1, imgP2 = game.winner() # เอาผลของเกมเอารูปของผล
 
             font = pygame.font.SysFont("comicsans", 90)
             if (check == 1 and player == 1) or (check == 0 and player == 0):
                 text = font.render("You Won!", 1, (63, 171, 187))
-                # text.set_alpha(200)
                 if (player == 0):
                     picmain = pygame.image.load(imgP1)
                     picmain = pygame.transform.scale(picmain, (width, height))
@@ -174,7 +172,6 @@ def main():
 
             elif check == -1:
                 text = font.render("Tie Game!", 1, (145, 165, 224))
-                # text.set_alpha(200)
                 if (player == 0):
                     picmain = pygame.image.load(imgP1)
                     picmain = pygame.transform.scale(picmain, (width, height))
@@ -185,7 +182,6 @@ def main():
                     win.blit(picmain, (0, 0))
             else:
                 text = font.render("You Lost!", 1, (217, 76, 73))
-                # text.set_alpha(200)
                 if (player == 0):
                     picmain = pygame.image.load(imgP1)
                     picmain = pygame.transform.scale(picmain, (width, height))
@@ -198,15 +194,6 @@ def main():
             win.blit(text, (width/2 - text.get_width() /
                      2, height/2 - text.get_height()/2))
 
-            # if (player == 0):
-            #     picmain = pygame.image.load(imgP1)
-            #     picmain = pygame.transform.scale(picmain, (width, height))
-            #     win.blit(picmain, (0, 0))
-            # else:
-            #     picmain = pygame.image.load(imgP2)
-            #     picmain = pygame.transform.scale(picmain, (width, height))
-            #     win.blit(picmain, (0, 0))
-
             pygame.display.update()
             pygame.time.delay(2000)
 
@@ -216,11 +203,11 @@ def main():
                 pygame.quit()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                pos = pygame.mouse.get_pos()
+                pos = pygame.mouse.get_pos() #position
                 for btn in btns:
                     if btn.click(pos) and game.connected():
-                        if player == 0:
-                            if not game.p1Went:
+                        if player == 0: # ถ้าเราเป็น player 0 
+                            if not game.p1Went: # ถ้าเรายังไม่เคยเลือก
                                 n.send(btn.text)
                         else:
                             if not game.p2Went:
@@ -229,7 +216,7 @@ def main():
         redrawWindow(win, game, player)
 
 
-# MenuScreen
+# MenuScreen ภาพตอนเปิดเกม
 pic = pygame.image.load('menu.jpg')
 pic = pygame.transform.scale(pic, (width, height))
 
@@ -241,9 +228,6 @@ def menu_screen():
         clock.tick(60)
         win.fill((0, 0, 0))
         win.blit(pic, (0, 0))
-        # font = pygame.font.SysFont("comicsans", 108)
-        # text = font.render("CLICK TO PLAY", 1, (255, 0, 0))
-        # win.blit(text, (500, 300))
         pygame.display.update()
 
         for event in pygame.event.get():

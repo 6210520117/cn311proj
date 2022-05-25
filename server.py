@@ -18,12 +18,12 @@ s.listen()
 print("Waiting...")
 
 
-games = {}  # store game
-idCount = 0
+games = {}  # store game ที่เปิดห้องอยู่
+idCount = 0 # ผู้เล่นใน server
 
 
 def threaded_client(conn, p, gameId):
-    global idCount
+    global idCount 
 
     # ส่งว่าเป็น player ใด ไปที่ client
     conn.send(str.encode(str(p)))
@@ -33,30 +33,30 @@ def threaded_client(conn, p, gameId):
             # รับข้อมูลจาก client
             data = conn.recv(4096).decode()
 
-            if gameId in games:
-                game = games[gameId]  # check game ว่ายังอยู่ในlist หรือป่าว
+            if gameId in games: # check game ว่ายังอยู่ในlist หรือป่าว
+                game = games[gameId] # เลือกว่า Game object ไหน
 
-                if not data:
+                if not data: 
                     break
                 else:
                     if data == "reset":
                         game.resetWent()
-                    elif data != "get":
-                        game.play(p, data)
+                    elif data != "get": # ตอนแรกมันเป็น get กรณีที่ client เลือกbtnต่างๆ ก็จะไม่ใช่ get 
+                        game.play(p, data) # ก็เอาสิ่งที่ player เลือกไปตั้งค่าว่า player เลือกอะไร 
 
-                    conn.sendall(pickle.dumps(game))
+                    conn.sendall(pickle.dumps(game)) # ส่งการอัพเดตไปยังทุก client ที่อยู่ใน connection
             else:
                 break
         except:
             break
 
     try:
-        del games[gameId]
+        del games[gameId] # ลบห้องกรณีผู้เล่นออกจากห้อง
         print(f'Game:{gameId} Player left the game')
     except:
         pass
-    idCount -= 1
-    conn.close()
+    idCount -= 1 # ลดจำนวนผู้เล่นบนserver
+    conn.close() # ปิดการเชือมต่อ
 
 
 while True:
@@ -64,16 +64,18 @@ while True:
     conn, addr = s.accept()
     print("Connected to:", addr)
 
-    # alg for gameID
-    idCount += 1
-    p = 0
-    gameId = (idCount - 1) // 2  # มอบสิ่งระบุตัวตน 0 vs 0 1 vs 1
-    if idCount % 2 == 1:
+    
+    idCount += 1 # เพิ่มจำนวนผู้เล่นบน server
+    p = 0 # player 0(default)
+
+    # เอามาจับคู่ แบ่งห้อง
+    gameId = (idCount - 1) // 2  # สิ่งระบุ gameID อารมณ์เหมือนหมายเลขห้อง
+    if idCount % 2 == 1: # กรณีผู้เล่นยังไม่มีคู่
         games[gameId] = Game(gameId)
         print("Find a suitable opponent...")
-    else:
-        games[gameId].ready = True
-        p = 1
+    else: # กรณีมีห้องว่าง ก็มาเป็น player ในห้องนั้น
+        games[gameId].ready = True # เกมพร้อมเล่นแล้ว
+        p = 1 # เปลี่ยนจากค่า default ให้เป็น player 1
 
-    # สร้าง thread แต่ละ client
+    # สร้าง thread เอาไว้รันแต่ละ client 
     start_new_thread(threaded_client, (conn, p, gameId))
